@@ -242,23 +242,23 @@ extern "C" {
     typedef uint64_t enet_uint64;   /**< unsigned 64-bit type */
 
     typedef enet_uint32 ENetVersion;
-    typedef struct _ENetPacket ENetPacket;
+    // typedef struct _ENetPacket ENetPacket;
 
     typedef struct _ENetCallbacks {
         void *(ENET_CALLBACK *malloc) (size_t size);
         void (ENET_CALLBACK *free) (void *memory);
         void (ENET_CALLBACK *no_memory) (void);
 
-        ENetPacket *(ENET_CALLBACK *packet_create)        (const void *data, size_t dataLength, enet_uint32 flags);
-        void        (ENET_CALLBACK *packet_destroy)       (ENetPacket *packet);
+        struct _ENetPacket *(ENET_CALLBACK *packet_create)        (const void *data, size_t dataLength, enet_uint32 flags);
+        void        (ENET_CALLBACK *packet_destroy)       (struct _ENetPacket *packet);
     } ENetCallbacks;
 
     extern void *enet_malloc(size_t);
     extern void enet_free(void *);
-    extern ENetPacket* enet_packet_create(const void*,size_t,enet_uint32);
-    extern ENetPacket* enet_packet_resize(ENetPacket*, size_t);
-    extern ENetPacket* enet_packet_copy(ENetPacket*);
-    extern void enet_packet_destroy(ENetPacket*);
+    extern struct _ENetPacket* enet_packet_create(const void*,size_t,enet_uint32);
+    extern struct _ENetPacket* enet_packet_resize(struct _ENetPacket*, size_t);
+    extern struct _ENetPacket* enet_packet_copy(struct _ENetPacket*);
+    extern void enet_packet_destroy(struct _ENetPacket*);
 
 // =======================================================================//
 // !
@@ -1055,6 +1055,8 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+#endif // ENET_INCLUDE_H
 
 #if defined(ENET_IMPLEMENTATION) && !defined(ENET_IMPLEMENTATION_DONE)
 #define ENET_IMPLEMENTATION_DONE 1
@@ -3792,6 +3794,7 @@ extern "C" {
     }
 
     static void enet_peer_reset_outgoing_commands(ENetPeer * peer, ENetList *queue) {
+        (void)peer;
         ENetOutgoingCommand *outgoingCommand;
 
         while (!enet_list_empty(queue)) {
@@ -5116,7 +5119,7 @@ extern "C" {
         }
     #endif
 
-    enet_uint32 enet_time_get() {
+    enet_uint32 enet_time_get(void) {
         // TODO enet uses 32 bit timestamps. We should modify it to use
         // 64 bit timestamps, but this is not trivial since we'd end up
         // changing half the structs in enet. For now, retain 32 bits, but
@@ -6254,4 +6257,4 @@ extern "C" {
 #endif
 
 #endif // ENET_IMPLEMENTATION
-#endif // ENET_INCLUDE_H
+
